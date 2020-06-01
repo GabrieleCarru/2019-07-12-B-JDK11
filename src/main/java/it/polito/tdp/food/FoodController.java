@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.food.model.Food;
+import it.polito.tdp.food.model.FoodCalories;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -60,6 +61,8 @@ public class FoodController {
         	boxFood.getItems().clear(); 
         	boxFood.getItems().addAll(cibi);
         	
+        	model.creaGrafo();
+        	
         	if(cibi.isEmpty()) {
         		txtResult.appendText("È stato selezionato un numero di portioni "
         				+ "per cui non esistono cibi. \n");
@@ -80,7 +83,22 @@ public class FoodController {
     @FXML
     void doGrassi(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Analisi grassi...");
+    	
+    	Food selezionato = boxFood.getValue();
+    	
+    	if(selezionato == null) {
+    		txtResult.appendText("ERRORE: devi selezionare un cibo dal menù. \n");
+    		return;
+    	}
+    	
+    	List<FoodCalories> lista = model.elencoCibiConnessi(selezionato);    
+    	
+    	for(int i = 0; i < 5 && i<lista.size(); i++) {
+    		txtResult.appendText(String.format("%s %f \n", 
+    				lista.get(i).getFood().getDisplay_name(), 
+    				lista.get(i).getCalories()));
+    	}
+    	
     }
 
     @FXML

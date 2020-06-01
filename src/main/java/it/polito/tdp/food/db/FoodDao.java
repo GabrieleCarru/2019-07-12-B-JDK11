@@ -140,4 +140,38 @@ public class FoodDao {
 			return null;
 		}
 	}
+
+	public Double calorieCongiunte(Food f1, Food f2) {
+		
+		String sql = "SELECT fc1.food_code as fcode1, fc2.food_code as fcode2, " + 
+				"avg(c.condiment_calories) as mediaCalorie " + 
+				"FROM food_condiment as fc1, food_condiment as fc2, condiment as c " + 
+				"WHERE fc1.condiment_code = fc2.condiment_code " + 
+				"AND fc1.condiment_code = c.condiment_code " + 
+				"AND fc1.id <> fc2.id " + 
+				"AND fc1.food_code = ? " + 
+				"AND fc2.food_code = ? " + 
+				"GROUP BY fc1.food_code, fc2.food_code";
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, f1.getFood_code());
+			st.setInt(2, f2.getFood_code());
+			ResultSet rs = st.executeQuery();
+			
+			Double calories = null;
+			if(rs.first()) {
+				calories = rs.getDouble("mediaCalorie");
+			} // altrimenti rimane null
+			
+			conn.close();
+			return calories;
+						
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
