@@ -109,4 +109,35 @@ public class FoodDao {
 		}
 
 	}
+	
+	public List<Food> getFoodsByPortions(int portions) {
+		
+		String sql = "select f.food_code as fcode, f.display_name as fname, "
+				+ "count(distinct p.portion_id) as porzioni " + 
+				"from food as f, portion as p " + 
+				"where f.food_code = p.food_code " + 
+				"group by f.food_code " + 
+				"having porzioni >= ? " +
+				"order by f.display_name ASC";
+		
+		List<Food> result = new ArrayList<>(); 
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, portions);
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()) {
+				result.add(new Food(rs.getInt("fcode"), rs.getString("fname")));
+			}
+			
+			conn.close();
+			return result;
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

@@ -5,8 +5,10 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
+import it.polito.tdp.food.model.Food;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +43,7 @@ public class FoodController {
     private Button btnSimula; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxFood"
-    private ComboBox<?> boxFood; // Value injected by FXMLLoader
+    private ComboBox<Food> boxFood; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtResult"
     private TextArea txtResult; // Value injected by FXMLLoader
@@ -49,7 +51,30 @@ public class FoodController {
     @FXML
     void doCreaGrafo(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Creazione grafo...");
+    	
+    	try {
+    		int portions = Integer.parseInt(txtPorzioni.getText());
+        	List<Food> cibi = model.getFoodsByPortions(portions);
+        	
+        	// La svuoto per evitare che più pressioni del bottone riempiano più volte la tendina
+        	boxFood.getItems().clear(); 
+        	boxFood.getItems().addAll(cibi);
+        	
+        	if(cibi.isEmpty()) {
+        		txtResult.appendText("È stato selezionato un numero di portioni "
+        				+ "per cui non esistono cibi. \n");
+        	} else {
+        		txtResult.appendText("Il menù a tendina è stato caricato correttamente. \n");
+        	}
+        	
+        	
+    	} catch(NumberFormatException e) {
+    		e.printStackTrace();
+    		txtResult.setText("ERRORE: Devi inserire un numero.");
+    		return;
+    	}
+    	
+    	
     }
 
     @FXML
