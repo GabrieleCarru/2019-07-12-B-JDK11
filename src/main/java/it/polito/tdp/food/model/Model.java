@@ -67,5 +67,14 @@ public class Model {
 		return result;
 	}
 	
+	public String Simula(Food cibo, int k) {
+		Simulator sim = new Simulator(this.graph, this);
+		sim.setK(k);
+		sim.init(cibo);
+		sim.run();
+		String messaggio = String.format("Preparati %d cibi in %f minuti. \n", 
+										sim.getCibiPreparati(), sim.getTempoPreparazione());
+		return messaggio;
+	}
 	
 }
